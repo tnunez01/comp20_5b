@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Quick Pick</title>
+        <link rel="icon" href="lotto.png">
+        <!--image source: https://www.bridgetech.io/AppIcons/balls.png-->
+
+        <style>
+            body {
+                text-align: center;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 18px;
+                color: #ffffff;
+                background-color: #0025cc;
+            }
+            img {
+                width: 200px;
+                height: 200px;
+            }
+            div {
+                padding-bottom: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <img src="lotto.png" alt="lotto">
+
+        <h1>Quick Pick</h1>
+        <div id="qpNums"></div>
+        <div id="qpLucky"></div>
+
+        <br/>
+        <div id="actualNums"></div>
+        <div id="actualLucky"></div>
+
+        <br/>
+        <div id="match"></div>
+        <div id="luck"></div>
+        <h2 id="winner"></h2>
+
+        <script>
+            // Generate and display QuickPick information
+            var ARR_LENGTH = 5;
+            var qpArr = [0, 0, 0, 0, 0];
+            populateArray(qpArr);
+            qpArr = sortArray(qpArr);
+            displayArray("qpNums", "The quick pick numbers are:", qpArr);
+
+            qpLuck = Math.floor(Math.random() * 18) + 1;
+            document.getElementById("qpLucky").innerHTML = "The lucky ball number is " + qpLuck;
+
+            // Collect winning numbers
+            var winningString= prompt("Enter winning numbers separated by a space", "28 30 31 42 43");
+            var winningLucky = prompt("Enter lucky ball number", 13);
+            var winningArr = winningString.split(" ");
+            displayArray("actualNums", "The winning numbers are:", winningArr)
+            document.getElementById("actualLucky").innerHTML = "The lucky ball number is " + winningLucky;
+            
+            var matches = checkForMatches(winningArr, qpArr);
+            document.getElementById("match").innerHTML = matches + " numbers matched.";
+            var lucky = false;
+            if (qpLuck == winningLucky) {
+                lucky = true;
+            }
+            if (lucky) {
+                document.getElementById("luck").innerHTML = "Lucky ball matched!";
+            } else {
+                document.getElementById("luck").innerHTML = "Lucky ball did not match.";
+            }
+            var winnings = calculateWinnings(matches, lucky);
+            
+            printWinnings("winner", winnings);
+
+            /*** FUNCTIONS ***/
+            function populateArray(emptyArray) {
+                var i;
+                for (i = 0; i < ARR_LENGTH; i++) {
+                    emptyArray[i] = Math.floor(Math.random() * 48) + 1;
+                }
+            }
+
+            function sortArray(lottoArray) {
+                var smallest, i, temp, j;
+                for (i = 0; i < lottoArray.length - 1; i++) {
+                    j = i;
+                    while (lottoArray[j] > lottoArray[j + 1]) {
+                        temp = lottoArray[j];
+                        lottoArray[j] = lottoArray [j + 1];
+                        lottoArray[j + 1] = temp;
+                        if (j == 0) {
+                            continue;
+                        } else {
+                            j--;
+                        }
+                    }
+                }
+                return lottoArray;
+            }
+            
+            function displayArray(elementID, intro, lottoArray) {
+                var i;
+                for (i = 0; i < lottoArray.length; i++) {
+                    intro = intro + " " + lottoArray[i];
+                }
+                document.getElementById(elementID).innerHTML = intro;
+            }
+
+            function checkForMatches(winningArray, quickPickArray) {
+                var i, j;
+                var matches = 0;
+                for (i = 0; i < winningArray.length; i++) {
+                    for (j = 0; j < quickPickArray.length; j ++) {
+                        if (winningArray[i] == quickPickArray[j]) {
+                            matches++;
+                        }
+                    }
+                }
+                return matches;
+            }
+
+            function calculateWinnings(numMatches, lucky) {
+                if (!lucky) {
+                    if (numMatches == 0) {
+                        return 0;
+                    } else if (numMatches == 2) {
+                        return 3;
+                    } else if (numMatches == 3) {
+                        return 20;
+                    } else if (numMatches == 4) {
+                        return 200;
+                    } else if (numMatches == 5) {
+                        return 25000;
+                    }
+                } else {
+                    if (numMatches == 0) {
+                        return 4;
+                    } else if (numMatches == 1) {
+                        return 6;
+                    } else if (numMatches == 2) {
+                        return 25;
+                    } else if (numMatches == 3) {
+                        return 150;
+                    } else if (numMatches == 4) {
+                        return 5000;
+                    } else if (numMatches == 5) {
+                        return 7000;
+                    }
+                }
+                return 0;
+            }
+            
+            function printWinnings(elementID, winnings) {
+                if (winnings == 25000) {
+                    document.getElementById(elementID).innerHTML = "You just won $25,000 a YEAR for LIFE!";
+                } else if (winnings == 7000) {
+                    document.getElementById(elementID).innerHTML = "You just won $7,000 a WEEK for LIFE!";
+                } else {
+                    document.getElementById(elementID).innerHTML = "You won $" + winnings + "!";
+                }
+            }
+        </script>
+    </body>
+</html>
